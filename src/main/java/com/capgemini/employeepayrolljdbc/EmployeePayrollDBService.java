@@ -1,6 +1,7 @@
 package com.capgemini.employeepayrolljdbc;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -60,6 +61,27 @@ public class EmployeePayrollDBService {
 			preparedStatement.setString(2, name);
 			preparedStatement.setDouble(1, salary);
 			return preparedStatement.executeUpdate();
+		} catch (SQLException e) {
+			throw new DatabaseException("Unable to execute query", ExceptionType.UNABLE_TO_EXECUTE_QUERY);
+		}
+	}
+	
+	public ArrayList<EmployeePayrollData> employeeDataWithinGivenDateRange(LocalDate start, LocalDate end) throws DatabaseException {
+		ArrayList<EmployeePayrollData> list = new ArrayList<>();
+		String query = String.format("Select * from employee_detail where START BETWEEN '%s' AND '%s';", Date.valueOf(start), Date.valueOf(end));
+		try {
+			Connection connection = getConnection();
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery(query);
+			while (resultSet.next()) {
+				int id = resultSet.getInt("id");
+				String emp_name = resultSet.getString("Employee_name");
+				double salary = resultSet.getDouble("salary");
+				LocalDate startDate = resultSet.getDate("start").toLocalDate();
+				System.out.println("Employee Name: " + emp_name + " Salary: Rs. "+salary);
+				list.add(new EmployeePayrollData(id, emp_name, salary, startDate));
+			}
+			return list;
 		} catch (SQLException e) {
 			throw new DatabaseException("Unable to execute query", ExceptionType.UNABLE_TO_EXECUTE_QUERY);
 		}
