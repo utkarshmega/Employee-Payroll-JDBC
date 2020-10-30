@@ -14,26 +14,37 @@ import com.capgemini.exception.DatabaseException.ExceptionType;
 
 public class EmployeePayrollDBService {
 
-	public ArrayList<EmployeePayrollData> readEmployeeDB() throws DatabaseException
-	{
+	public ArrayList<EmployeePayrollData> readEmployeeDB() throws DatabaseException {
 		ArrayList<EmployeePayrollData> list = new ArrayList<>();
 		String query = "Select * from employee_detail";
 		try {
 			Connection connection = getConnection();
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(query);
-			while(resultSet.next())
-			{
+			while (resultSet.next()) {
 				int id = resultSet.getInt("id");
 				String emp_name = resultSet.getString("Employee_name");
 				double salary = resultSet.getDouble("salary");
 				LocalDate startDate = resultSet.getDate("start").toLocalDate();
-				System.out.println("Employee Name: "+emp_name);
+				System.out.println("Employee Name: " + emp_name + " Salary: Rs. "+salary);
 				list.add(new EmployeePayrollData(id, emp_name, salary, startDate));
 			}
 			return list;
+		} catch (SQLException e) {
+			throw new DatabaseException("Unable to execute query", ExceptionType.UNABLE_TO_EXECUTE_QUERY);
 		}
-		catch(SQLException e) {
+	}
+
+	public int updateQuery(String name, double salary) throws DatabaseException {
+
+		String query = String.format("update employee_detail set salary = %.2f where employee_name = '%s';", salary,
+				name);
+
+		try {
+			Connection connection = getConnection();
+			Statement statement = connection.createStatement();
+			return statement.executeUpdate(query);
+		} catch (SQLException e) {
 			throw new DatabaseException("Unable to execute query", ExceptionType.UNABLE_TO_EXECUTE_QUERY);
 		}
 	}
@@ -45,11 +56,11 @@ public class EmployeePayrollDBService {
 		Connection connection;
 		try {
 			connection = DriverManager.getConnection(jdbcURL, username, password);
-			System.out.println("Connection Sucessful!!" +connection);
-		} catch(SQLException e) {
+			System.out.println("Connection Sucessful!!" + connection);
+		} catch (SQLException e) {
 			throw new DatabaseException("Unable to connect to database", ExceptionType.UNABLE_TO_CONNECT);
 		}
-		
+
 		return connection;
 	}
 

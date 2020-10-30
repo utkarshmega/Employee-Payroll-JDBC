@@ -13,7 +13,15 @@ public class EmployeePayrollTest {
 	public void givenEmployeePayrollDB_ShouldAssertNumberOfEntries() throws DatabaseException {
 		EmployeePayrollDBService employeePayrollDBService = new EmployeePayrollDBService();
 		ArrayList<EmployeePayrollData> list =  employeePayrollDBService.readEmployeeDB();
-		assertEquals(3, list.size());
+		assertEquals(4, list.size());
+	}
+	
+	@Test
+	public void givenEmployeePayollDB_shouldPerformUpdate() throws DatabaseException {
+		EmployeePayrollDBService employeePayrollDBService = new EmployeePayrollDBService();
+		int resultSetNo = employeePayrollDBService.updateQuery("Terisa", 3000000);
+		System.out.println(resultSetNo);
+		assertEquals(1, resultSetNo);
 	}
 
 }
