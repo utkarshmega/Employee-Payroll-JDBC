@@ -23,5 +23,13 @@ public class EmployeePayrollTest {
 		System.out.println(resultSetNo);
 		assertEquals(1, resultSetNo);
 	}
+	
+	@Test
+	public void givenEmployeePayollDB_shouldPerformUpdateUsingPreparedStatement() throws DatabaseException {
+		EmployeePayrollDBService employeePayrollDBService = new EmployeePayrollDBService();
+		int resultSetNo = employeePayrollDBService.updateQueryUsingPreparedStatement("Terisa", 4000000);
+		System.out.println(resultSetNo);
+		assertEquals(1, resultSetNo);
+	}
 
 }

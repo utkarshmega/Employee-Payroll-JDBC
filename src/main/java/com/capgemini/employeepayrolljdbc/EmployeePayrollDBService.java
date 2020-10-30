@@ -2,6 +2,7 @@ package com.capgemini.employeepayrolljdbc;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -44,6 +45,21 @@ public class EmployeePayrollDBService {
 			Connection connection = getConnection();
 			Statement statement = connection.createStatement();
 			return statement.executeUpdate(query);
+		} catch (SQLException e) {
+			throw new DatabaseException("Unable to execute query", ExceptionType.UNABLE_TO_EXECUTE_QUERY);
+		}
+	}
+	
+	public int updateQueryUsingPreparedStatement(String name, double salary) throws DatabaseException {
+
+		String query = String.format("update employee_detail set salary = ? where employee_name = ?;");
+
+		try {
+			Connection connection = getConnection();
+			PreparedStatement preparedStatement = connection.prepareStatement(query);
+			preparedStatement.setString(2, name);
+			preparedStatement.setDouble(1, salary);
+			return preparedStatement.executeUpdate();
 		} catch (SQLException e) {
 			throw new DatabaseException("Unable to execute query", ExceptionType.UNABLE_TO_EXECUTE_QUERY);
 		}
