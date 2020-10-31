@@ -8,12 +8,14 @@ public class EmployeePayrollData {
 	private String empName;
 	private double salary;
 	private LocalDate start;
+	private String gender;
 	
-	public EmployeePayrollData(int empId, String empName, double salary, LocalDate start) {
+	public EmployeePayrollData(int empId, String empName, String gender, double salary, LocalDate start) {
 		this.setEmpId(empId);
 		this.setEmpName(empName);
 		this.setSalary(salary);
 		this.setStart(start);
+		this.setGender(gender);
 	}
 
 	public int getEmpId() {
@@ -51,6 +53,14 @@ public class EmployeePayrollData {
 
 	public void setStart(LocalDate start) {
 		this.start = start;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
 	}
 
 }

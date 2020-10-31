@@ -26,10 +26,11 @@ public class EmployeePayrollDBService {
 			while (resultSet.next()) {
 				int id = resultSet.getInt("id");
 				String emp_name = resultSet.getString("Employee_name");
+				String gender = resultSet.getString("Gender");
 				double salary = resultSet.getDouble("salary");
 				LocalDate startDate = resultSet.getDate("start").toLocalDate();
 				System.out.println("Employee Name: " + emp_name + " Salary: Rs. "+salary);
-				list.add(new EmployeePayrollData(id, emp_name, salary, startDate));
+				list.add(new EmployeePayrollData(id, emp_name, gender, salary, startDate));
 			}
 			return list;
 		} catch (SQLException e) {
@@ -76,13 +77,34 @@ public class EmployeePayrollDBService {
 			while (resultSet.next()) {
 				int id = resultSet.getInt("id");
 				String emp_name = resultSet.getString("Employee_name");
+				String gender = resultSet.getString("Gender");
 				double salary = resultSet.getDouble("salary");
 				LocalDate startDate = resultSet.getDate("start").toLocalDate();
 				System.out.println("Employee Name: " + emp_name + " Salary: Rs. "+salary);
-				list.add(new EmployeePayrollData(id, emp_name, salary, startDate));
+				list.add(new EmployeePayrollData(id, emp_name, gender, salary, startDate));
 			}
 			return list;
 		} catch (SQLException e) {
+			throw new DatabaseException("Unable to execute query", ExceptionType.UNABLE_TO_EXECUTE_QUERY);
+		}
+	}
+	
+	public double sumOfSalaryGroupByGender(String gender) throws DatabaseException {
+		
+		String query = String.format("select SUM(salary) from employee_detail where gender = '%s' group by gender;", gender);
+		
+		try {
+			Connection connection = getConnection();
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery(query);
+			double sum=0;
+			while (resultSet.next()) {
+				double salary = resultSet.getDouble("SUM(salary)");
+				sum += salary;
+			}
+			System.out.println("Sum of salary group by "+gender+" is Rs. "+sum);
+			return sum;
+		} catch(SQLException e) {
 			throw new DatabaseException("Unable to execute query", ExceptionType.UNABLE_TO_EXECUTE_QUERY);
 		}
 	}

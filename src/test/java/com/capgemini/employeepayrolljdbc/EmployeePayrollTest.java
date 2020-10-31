@@ -41,5 +41,12 @@ public class EmployeePayrollTest {
 				.employeeDataWithinGivenDateRange(LocalDate.of(2019, 01, 01), LocalDate.of(2020, 10, 30));
 		assertEquals(3, list.size());
 	}
+	
+	@Test
+	public void givenEmployeePayollDB_shouldPerformSumOfSalaryByGender() throws DatabaseException {
+		EmployeePayrollDBService employeePayrollDBService = new EmployeePayrollDBService();
+		double sum = employeePayrollDBService.sumOfSalaryGroupByGender("M");
+		assertEquals(6000000.00, sum, 0.0);
+	}
 
 }
