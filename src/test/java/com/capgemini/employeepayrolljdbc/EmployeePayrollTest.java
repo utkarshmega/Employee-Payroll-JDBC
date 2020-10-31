@@ -48,5 +48,11 @@ public class EmployeePayrollTest {
 		double sum = employeePayrollDBService.sumOfSalaryGroupByGender("M");
 		assertEquals(6000000.00, sum, 0.0);
 	}
-
+	
+	@Test
+	public void givenEmployeePayollDB_addNewEmployeeToDB() throws DatabaseException {
+		EmployeePayrollDBService employeePayrollDBService = new EmployeePayrollDBService();
+		employeePayrollDBService.addEmployeeToPayroll("Akansha", "F", 1250000.00, LocalDate.now());
+	}
+	
 }

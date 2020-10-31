@@ -29,7 +29,7 @@ public class EmployeePayrollDBService {
 				String gender = resultSet.getString("Gender");
 				double salary = resultSet.getDouble("salary");
 				LocalDate startDate = resultSet.getDate("start").toLocalDate();
-				System.out.println("Employee Name: " + emp_name + " Salary: Rs. "+salary);
+				System.out.println("Employee Name: " + emp_name + " Salary: Rs. " + salary);
 				list.add(new EmployeePayrollData(id, emp_name, gender, salary, startDate));
 			}
 			return list;
@@ -51,7 +51,7 @@ public class EmployeePayrollDBService {
 			throw new DatabaseException("Unable to execute query", ExceptionType.UNABLE_TO_EXECUTE_QUERY);
 		}
 	}
-	
+
 	public int updateQueryUsingPreparedStatement(String name, double salary) throws DatabaseException {
 
 		String query = String.format("update employee_detail set salary = ? where employee_name = ?;");
@@ -66,10 +66,12 @@ public class EmployeePayrollDBService {
 			throw new DatabaseException("Unable to execute query", ExceptionType.UNABLE_TO_EXECUTE_QUERY);
 		}
 	}
-	
-	public ArrayList<EmployeePayrollData> employeeDataWithinGivenDateRange(LocalDate start, LocalDate end) throws DatabaseException {
+
+	public ArrayList<EmployeePayrollData> employeeDataWithinGivenDateRange(LocalDate start, LocalDate end)
+			throws DatabaseException {
 		ArrayList<EmployeePayrollData> list = new ArrayList<>();
-		String query = String.format("Select * from employee_detail where START BETWEEN '%s' AND '%s';", Date.valueOf(start), Date.valueOf(end));
+		String query = String.format("Select * from employee_detail where START BETWEEN '%s' AND '%s';",
+				Date.valueOf(start), Date.valueOf(end));
 		try {
 			Connection connection = getConnection();
 			Statement statement = connection.createStatement();
@@ -80,7 +82,7 @@ public class EmployeePayrollDBService {
 				String gender = resultSet.getString("Gender");
 				double salary = resultSet.getDouble("salary");
 				LocalDate startDate = resultSet.getDate("start").toLocalDate();
-				System.out.println("Employee Name: " + emp_name + " Salary: Rs. "+salary);
+				System.out.println("Employee Name: " + emp_name + " Salary: Rs. " + salary);
 				list.add(new EmployeePayrollData(id, emp_name, gender, salary, startDate));
 			}
 			return list;
@@ -88,25 +90,44 @@ public class EmployeePayrollDBService {
 			throw new DatabaseException("Unable to execute query", ExceptionType.UNABLE_TO_EXECUTE_QUERY);
 		}
 	}
-	
+
 	public double sumOfSalaryGroupByGender(String gender) throws DatabaseException {
-		
-		String query = String.format("select SUM(salary) from employee_detail where gender = '%s' group by gender;", gender);
-		
+
+		String query = String.format("select SUM(salary) from employee_detail where gender = '%s' group by gender;",
+				gender);
+
 		try {
 			Connection connection = getConnection();
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(query);
-			double sum=0;
+			double sum = 0;
 			while (resultSet.next()) {
 				double salary = resultSet.getDouble("SUM(salary)");
 				sum += salary;
 			}
-			System.out.println("Sum of salary group by "+gender+" is Rs. "+sum);
+			System.out.println("Sum of salary group by " + gender + " is Rs. " + sum);
 			return sum;
+		} catch (SQLException e) {
+			throw new DatabaseException("Unable to execute query", ExceptionType.UNABLE_TO_EXECUTE_QUERY);
+		}
+	}
+
+	public void addEmployeeToPayroll(String name, String gender, double salary, LocalDate start) throws DatabaseException {
+		String query = String.format(
+				"Insert into employee_detail(employee_name, gender, salary, start) values ('%s', '%s', '%s', '%s');", name,
+				gender, salary, Date.valueOf(start));
+		try {
+			Connection connection = getConnection();
+			Statement statement = connection.createStatement();
+			int resultSet = statement.executeUpdate(query);
+			if(resultSet == 1)
+				System.out.println("New data added to the database");
+			else
+				System.out.println("Data not added to the database");
 		} catch(SQLException e) {
 			throw new DatabaseException("Unable to execute query", ExceptionType.UNABLE_TO_EXECUTE_QUERY);
 		}
+		readEmployeeDB();
 	}
 
 	private Connection getConnection() throws DatabaseException {
