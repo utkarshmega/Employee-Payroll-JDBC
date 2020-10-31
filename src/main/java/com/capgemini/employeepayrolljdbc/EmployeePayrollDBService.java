@@ -112,22 +112,65 @@ public class EmployeePayrollDBService {
 		}
 	}
 
-	public void addEmployeeToPayroll(String name, String gender, double salary, LocalDate start) throws DatabaseException {
+	public void addEmployeeToPayroll(String name, String gender, double salary, LocalDate start)
+			throws DatabaseException {
 		String query = String.format(
-				"Insert into employee_detail(employee_name, gender, salary, start) values ('%s', '%s', '%s', '%s');", name,
-				gender, salary, Date.valueOf(start));
+				"Insert into employee_detail(employee_name, gender, salary, start) values ('%s', '%s', '%s', '%s');",
+				name, gender, salary, Date.valueOf(start));
+		Connection connection = null;
 		try {
-			Connection connection = getConnection();
+			connection = getConnection();
 			Statement statement = connection.createStatement();
 			int resultSet = statement.executeUpdate(query);
-			if(resultSet == 1)
+			if (resultSet == 1)
 				System.out.println("New data added to the database");
 			else
 				System.out.println("Data not added to the database");
-		} catch(SQLException e) {
+		} catch (SQLException e) {
 			throw new DatabaseException("Unable to execute query", ExceptionType.UNABLE_TO_EXECUTE_QUERY);
 		}
 		readEmployeeDB();
+
+		try {
+			Statement statement = connection.createStatement();
+			double deduction = 0.20 * salary;
+			double taxable_pay = salary - deduction;
+			double tax = 0.10 * taxable_pay;
+			double net_pay = salary - tax;
+
+			String query1 = String.format(
+					"Insert into payroll_detail (employee_name, deduction, taxable_salary, tax, net_pay) values ('%s', '%s', '%s', '%s', '%s');",
+					name, deduction, taxable_pay, tax, net_pay);
+			int result = statement.executeUpdate(query1);
+			if (result == 1)
+				System.out.println("All salary values added to the database payroll_details");
+			else
+				System.out.println("Data not entered into the payroll_details");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		readPayrollDetailDB();
+	}
+
+	private void readPayrollDetailDB() throws DatabaseException {
+		String query = "select * from payroll_detail;";
+		try {
+			Connection connection = getConnection();
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery(query);
+			while (resultSet.next()) {
+				int id = resultSet.getInt("id");
+				String emp_name = resultSet.getString("Employee_name");
+				double deduction = resultSet.getDouble("deducton");
+				double taxable_salary = resultSet.getDouble("taxable_salary");
+				double tax = resultSet.getDouble("tax");
+				double net_pay = resultSet.getDouble("net_pay");
+				System.out.println("Employee Name: " + emp_name + " Deduction: Rs. "+deduction +" Taxablesalary: Rs. " + taxable_salary + " Tax: Rs. "+tax + " Net Pay: Rs. "+net_pay);
+			}
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 	private Connection getConnection() throws DatabaseException {
