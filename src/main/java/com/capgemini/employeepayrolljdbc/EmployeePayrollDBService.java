@@ -161,7 +161,7 @@ public class EmployeePayrollDBService {
 			while (resultSet.next()) {
 				int id = resultSet.getInt("id");
 				String emp_name = resultSet.getString("Employee_name");
-				double deduction = resultSet.getDouble("deducton");
+				double deduction = resultSet.getDouble("deduction");
 				double taxable_salary = resultSet.getDouble("taxable_salary");
 				double tax = resultSet.getDouble("tax");
 				double net_pay = resultSet.getDouble("net_pay");
@@ -170,7 +170,7 @@ public class EmployeePayrollDBService {
 		} catch(SQLException e) {
 			e.printStackTrace();
 		}
-		 
+		
 	}
 
 	private Connection getConnection() throws DatabaseException {

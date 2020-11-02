@@ -1,6 +1,8 @@
 package com.capgemini.employeepayrolljdbc;
 
 import java.sql.Date;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import static org.junit.Assert.*;
@@ -53,6 +55,17 @@ public class EmployeePayrollTest {
 	public void givenEmployeePayollDB_addNewEmployeeToDB() throws DatabaseException {
 		EmployeePayrollDBService employeePayrollDBService = new EmployeePayrollDBService();
 		employeePayrollDBService.addEmployeeToPayroll("Akansha", "F", 1250000.00, LocalDate.now());
+	}
+	
+	@Test
+	public void givenPayrollDB_recordTimeToAddEmployee() throws DatabaseException {
+		EmployeePayrollDBService employeePayrollDBService = new EmployeePayrollDBService();
+		Instant start = Instant.now();
+		employeePayrollDBService.addEmployeeToPayroll("Charlie", "M", 3000000, LocalDate.of(2020, 05, 21));
+		employeePayrollDBService.addEmployeeToPayroll("Terisa", "F", 3000000, LocalDate.of(2020, 10, 13));
+		employeePayrollDBService.addEmployeeToPayroll("Akansha", "F", 1250000, LocalDate.now());
+		Instant end = Instant.now();
+		System.out.println("Duration for entering the data using console is " +Duration.between(start, end));
 	}
 	
 }
