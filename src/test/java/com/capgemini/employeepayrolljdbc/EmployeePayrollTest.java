@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import com.capgemini.employeepayrolldata.EmployeePayrollData;
 import com.capgemini.exception.DatabaseException;
+import com.sun.tools.javac.util.List;
 
 public class EmployeePayrollTest {
 
@@ -66,6 +67,15 @@ public class EmployeePayrollTest {
 		employeePayrollDBService.addEmployeeToPayroll("Akansha", "F", 1250000, LocalDate.now());
 		Instant end = Instant.now();
 		System.out.println("Duration for entering the data using console is " +Duration.between(start, end));
+		
+		ArrayList<EmployeePayrollData> employeeList = new ArrayList<EmployeePayrollData>();
+		employeeList.add(new EmployeePayrollData(6, "Charlie", "M", 3000000, LocalDate.of(2020, 05, 21)));
+		employeeList.add(new EmployeePayrollData(7, "Terisa", "F", 3000000, LocalDate.of(2020, 10, 13)));
+		employeeList.add(new EmployeePayrollData(8, "Akansha", "F", 1250000, LocalDate.now()));
+		Instant threadStart = Instant.now();
+		employeePayrollDBService.addEmployeeDataUsingThread(employeeList);
+		Instant threadEnd = Instant.now();
+		System.out.println("Duration for complete execution with Threads: " + Duration.between(threadStart, threadEnd));
 	}
 	
 }

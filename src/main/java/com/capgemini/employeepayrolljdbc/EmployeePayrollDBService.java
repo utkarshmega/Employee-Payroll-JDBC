@@ -9,6 +9,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.capgemini.employeepayrolldata.EmployeePayrollData;
 import com.capgemini.exception.DatabaseException;
@@ -165,12 +168,41 @@ public class EmployeePayrollDBService {
 				double taxable_salary = resultSet.getDouble("taxable_salary");
 				double tax = resultSet.getDouble("tax");
 				double net_pay = resultSet.getDouble("net_pay");
-				System.out.println("Employee Name: " + emp_name + " Deduction: Rs. "+deduction +" Taxablesalary: Rs. " + taxable_salary + " Tax: Rs. "+tax + " Net Pay: Rs. "+net_pay);
+				System.out.println("Employee Name: " + emp_name + " Deduction: Rs. " + deduction
+						+ " Taxablesalary: Rs. " + taxable_salary + " Tax: Rs. " + tax + " Net Pay: Rs. " + net_pay);
 			}
-		} catch(SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
+	}
+
+	public void addEmployeeDataUsingThread(List<EmployeePayrollData> employeeList) {
+		Map<Integer, Boolean> employeeInsertionStatus = new HashMap<Integer, Boolean>();
+		employeeList.forEach(EmployeePayrollData -> {
+			Runnable task = () -> {
+				employeeInsertionStatus.put(EmployeePayrollData.hashCode(), false);
+				try {
+					System.out.println("Employee Being added: " + Thread.currentThread().getName());
+					addEmployeeToPayroll(EmployeePayrollData.getEmpName(), EmployeePayrollData.getGender(),
+							EmployeePayrollData.getSalary(), EmployeePayrollData.getStart());
+					employeeInsertionStatus.put(EmployeePayrollData.hashCode(), true);
+					System.out.println("Employee added: " + Thread.currentThread().getName());
+				} catch (DatabaseException e) {
+					System.out.println(e.getMessage());
+				}
+			};
+			Thread thread = new Thread(task, EmployeePayrollData.getEmpName());
+			thread.start();
+		});
+		while (employeeInsertionStatus.containsValue(false)) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				System.out.println(e.getMessage());
+			}
+		}
+
 	}
 
 	private Connection getConnection() throws DatabaseException {
