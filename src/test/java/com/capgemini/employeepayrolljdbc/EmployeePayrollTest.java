@@ -68,10 +68,15 @@ public class EmployeePayrollTest {
 		Instant end = Instant.now();
 		System.out.println("Duration for entering the data using console is " +Duration.between(start, end));
 		
+	}
+	
+	@Test
+	public void givenPayrollDB_recordTimeToAddEmployeeUsingThread() {
+		EmployeePayrollDBService employeePayrollDBService = new EmployeePayrollDBService();
 		ArrayList<EmployeePayrollData> employeeList = new ArrayList<EmployeePayrollData>();
-		employeeList.add(new EmployeePayrollData(6, "Charlie", "M", 3000000, LocalDate.of(2020, 05, 21)));
-		employeeList.add(new EmployeePayrollData(7, "Terisa", "F", 3000000, LocalDate.of(2020, 10, 13)));
-		employeeList.add(new EmployeePayrollData(8, "Akansha", "F", 1250000, LocalDate.now()));
+		employeeList.add(new EmployeePayrollData(11, "Charlieeee", "M", 5000000, LocalDate.of(2020, 07, 21)));
+		employeeList.add(new EmployeePayrollData(7, "Kirti", "F", 4500000, LocalDate.of(2018, 10, 13)));
+		employeeList.add(new EmployeePayrollData(8, "Akanshaaaaaa", "F", 7250000, LocalDate.now()));
 		Instant threadStart = Instant.now();
 		employeePayrollDBService.addEmployeeDataUsingThread(employeeList);
 		Instant threadEnd = Instant.now();
